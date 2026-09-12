@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">diem_geo</string>
+
+    <string name="nav_map">Mappa</string>
+    <string name="nav_camera">Fotocamera</string>
+    <string name="nav_saved">Salvati</string>
+
+    <string name="action_start_polygon">Avvia tracciamento</string>
+    <string name="action_stop_polygon">Ferma e salva</string>
+    <string name="action_add_wms_source">Aggiungi sorgente WMS/WMTS</string>
+    <string name="action_take_photo">Scatta foto</string>
+    <string name="action_share">Condividi</string>
+    <string name="action_save">Salva</string>
+    <string name="action_delete">Elimina</string>
+
+    <string name="label_gps_accuracy">Precisione GPS: %1$.1f m</string>
+    <string name="label_satellites">Satelliti: %1$d (usati: %2$d)</string>
+    <string name="label_trust_score">Attendibilità posizione: %1$d%%</string>
+    <string name="label_trust_high">Alta</string>
+    <string name="label_trust_medium">Media</string>
+    <string name="label_trust_low">Bassa — possibile posizione simulata</string>
+
+    <string name="permission_location_rationale">Serve il permesso di localizzazione per geolocalizzarti e tracciare i poligoni.</string>
+    <string name="permission_camera_rationale">Serve il permesso fotocamera per scattare foto del luogo.</string>
+    <string name="permission_denied">Permesso negato: alcune funzioni non saranno disponibili.</string>
+
+    <string name="wms_dialog_title">Nuova sorgente mappa</string>
+    <string name="wms_dialog_name_hint">Nome sorgente</string>
+    <string name="wms_dialog_url_hint">URL WMS/WMTS (con {z}/{x}/{y} per WMTS)</string>
+    <string name="wms_dialog_type_wms">WMS</string>
+    <string name="wms_dialog_type_wmts">WMTS/XYZ</string>
+
+    <string name="ai_label_analyzing">Analisi immagine in corso…</string>
+    <string name="ai_label_result">Contenuto rilevato: %1$s</string>
+    <string name="ai_label_none">Nessun oggetto riconosciuto con sufficiente confidenza</string>
+
+    <string name="polygon_area_label">Area: %1$.1f m²</string>
+    <string name="polygon_points_label">Punti: %1$d</string>
+
+    <string name="stego_verified">Foto integra: firma nascosta verificata</string>
+    <string name="stego_tampered">Attenzione: la foto risulta modificata rispetto all\'originale</string>
+</resources>

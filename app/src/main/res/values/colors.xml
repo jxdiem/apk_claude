@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="diem_green">#2E7D32</color>
+    <color name="diem_green_dark">#1B5E20</color>
+    <color name="diem_accent">#FFA000</color>
+    <color name="diem_background">#E8F5E9</color>
+    <color name="trust_high">#2E7D32</color>
+    <color name="trust_medium">#F9A825</color>
+    <color name="trust_low">#C62828</color>
+</resources>
