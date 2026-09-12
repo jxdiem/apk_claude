@@ -114,34 +114,6 @@ class LocationTrustEngine(private val context: Context) {
         var satellitesUsed = 0
         var avgCn0 = 0f
 
-        val gnssCallback = object : GnssStatus.Callback() {
-            override fun onSatelliteStatusChanged(status: GnssStatus) {
-                satellitesInView = status.satelliteCount
-                var used = 0
-                var cn0Sum = 0f
-                for (i in 0 until status.satelliteCount) {
-                    if (status.usedInFix(i)) {
-                        used++
-                        cn0Sum += status.getCn0DbHz(i)
-                    }
-                }
-                satellitesUsed = used
-                avgCn0 = if (used > 0) cn0Sum / used else 0f
-                emitState(satellitesInView, satellitesUsed, avgCn0, _state.value.location)
-            }
-        }
-
-        val locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                emitState(satellitesInView, satellitesUsed, avgCn0, location)
-            }
-
-            @Deprecated("Deprecated in Java")
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
-            override fun onProviderEnabled(provider: String) = Unit
-            override fun onProviderDisabled(provider: String) = Unit
-        }
-
         fun emitState(satView: Int, satUsed: Int, cn0: Float, location: Location?) {
             val isMock = location?.let {
                 @Suppress("DEPRECATION")
@@ -169,6 +141,34 @@ class LocationTrustEngine(private val context: Context) {
             )
             _state.value = newState
             trySend(newState)
+        }
+
+        val gnssCallback = object : GnssStatus.Callback() {
+            override fun onSatelliteStatusChanged(status: GnssStatus) {
+                satellitesInView = status.satelliteCount
+                var used = 0
+                var cn0Sum = 0f
+                for (i in 0 until status.satelliteCount) {
+                    if (status.usedInFix(i)) {
+                        used++
+                        cn0Sum += status.getCn0DbHz(i)
+                    }
+                }
+                satellitesUsed = used
+                avgCn0 = if (used > 0) cn0Sum / used else 0f
+                emitState(satellitesInView, satellitesUsed, avgCn0, _state.value.location)
+            }
+        }
+
+        val locationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                emitState(satellitesInView, satellitesUsed, avgCn0, location)
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
+            override fun onProviderEnabled(provider: String) = Unit
+            override fun onProviderDisabled(provider: String) = Unit
         }
 
         val sensorListener = object : SensorEventListener {

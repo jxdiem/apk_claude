@@ -37,7 +37,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     val lastCapture: SharedFlow<PhotoEntity> = _lastCapture
 
     init {
-        viewModelScope.launch { trustEngine.observe().collect() }
+        viewModelScope.launch { trustEngine.observe().collect { } }
     }
 
     fun capture(bitmap: Bitmap) {
