@@ -30,3 +30,10 @@ combina più segnali (flag di mock location, numero di satelliti usati nel
 fix, qualità del segnale GNSS, plausibilità dei sensori di movimento) in
 un indicatore euristico 0-100%, utile per segnalare posizioni sospette ma
 non utilizzabile come prova legale di autenticità.
+
+## Crediti
+
+Lo sfondo della schermata di benvenuto (`app/src/main/res/drawable-nodpi/splash_map_bg.jpg`)
+è la mappa del mondo del 1565 di Paolo Forlani, di pubblico dominio
+(PD-old-100-expired), da Wikimedia Commons:
+https://commons.wikimedia.org/wiki/File:Old-world-map.jpg

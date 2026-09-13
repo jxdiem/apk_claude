@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">diem_geo</string>
+    <string name="splash_tagline">Geolocalizzazione affidabile sul campo</string>
 
     <string name="nav_map">Mappa</string>
     <string name="nav_camera">Fotocamera</string>
     <string name="nav_saved">Salvati</string>
+    <string name="nav_info">Informazioni e versione</string>
+    <string name="nav_manual">Manuale</string>
+    <string name="drawer_open">Apri menu</string>
+    <string name="drawer_close">Chiudi menu</string>
+    <string name="info_dialog_title">diem_geo</string>
+    <string name="info_dialog_message">Versione %1$s (build %2$d)\n\nApp per la geolocalizzazione affidabile sul campo: mappe open source, tracciamento poligoni, stima dell\'errore GPS, foto con riconoscimento AI e firma anti-frode.</string>
 
     <string name="action_start_polygon">Avvia tracciamento</string>
     <string name="action_stop_polygon">Ferma e salva</string>
@@ -40,4 +47,15 @@
 
     <string name="stego_verified">Foto integra: firma nascosta verificata</string>
     <string name="stego_tampered">Attenzione: la foto risulta modificata rispetto all\'originale</string>
-</resources>
+
+    <string name="manual_section_map_title">Mappa</string>
+    <string name="manual_section_map_body">Il tuo punto sulla mappa si aggiorna in tempo reale. In alto trovi la precisione GPS, il numero di satelliti usati nel fix e l\'attendibilità della posizione: un punteggio da 0 a 100% calcolato incrociando il flag di posizione simulata di Android, la qualità del segnale GNSS e la plausibilità dei sensori di movimento. Un punteggio basso segnala una posizione sospetta, ma non è una prova legale di autenticità.\n\nCon \"Livelli\" scegli la mappa di sfondo (OpenStreetMap, OpenTopoMap, ortofoto, ecc.); con \"Aggiungi sorgente WMS/WMTS\" puoi collegare qualsiasi altro servizio compatibile inserendone l\'URL.</string>
+
+    <string name="manual_section_polygon_title">Tracciare un poligono</string>
+    <string name="manual_section_polygon_body">Premi \"Avvia tracciamento\" e cammina lungo il perimetro dell\'area: ogni due metri circa viene registrato un nuovo vertice, con la sua area, l\'accuratezza e l\'attendibilità calcolate in tempo reale. Premi \"Ferma e salva\" per chiudere il poligono, dargli un nome e salvarlo: viene creato anche un file GeoJSON con tutti i metadati di ogni punto (ora, satelliti, attendibilità). Il tracciamento resta attivo solo mentre la schermata Mappa è in primo piano.</string>
+
+    <string name="manual_section_camera_title">Fotocamera e riconoscimento AI</string>
+    <string name="manual_section_camera_body">Scattando una foto, l\'app la etichetta automaticamente con un modello di intelligenza artificiale che funziona interamente sul telefono, senza connessione. La foto viene salvata con coordinate, ora e dati dei sensori nei metadati EXIF, più una firma nascosta nei pixel (steganografia): se il file viene poi modificato o ricompresso, la firma non torna più valida, ed è quindi possibile verificarne l\'integrità dalla schermata Salvati.</string>
+
+    <string name="manual_section_saved_title">Salvati</string>
+    <string name="manual_section_saved_body">Qui trovi tutti i poligoni e le foto salvati. Per ognuno puoi condividerlo con altre app, eliminarlo oppure, per le foto, verificarne l\'integrità con il pulsante \"Verifica\".</string>

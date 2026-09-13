@@ -6,4 +6,10 @@
         <item name="colorAccent">@color/diem_accent</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/diem_green_dark</item>
     </style>
+
+    <style name="Theme.DiemGeo.Splash" parent="Theme.DiemGeo">
+        <item name="android:windowBackground">@color/splash_scrim</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
 </resources>
