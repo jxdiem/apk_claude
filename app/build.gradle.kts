@@ -18,7 +18,7 @@ fun signingProp(propertyKey: String, envKey: String): String? =
     keystoreProperties.getProperty(propertyKey) ?: System.getenv(envKey)
 
 val releaseStoreFilePath = signingProp("storeFile", "RELEASE_STORE_FILE")
-val hasReleaseSigning = releaseStoreFilePath != null && file(releaseStoreFilePath).exists()
+val hasReleaseSigning = releaseStoreFilePath != null && rootProject.file(releaseStoreFilePath).exists()
 
 android {
     namespace = "com.jxdiem.diemgeo"
@@ -37,7 +37,7 @@ android {
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(releaseStoreFilePath!!)
+                storeFile = rootProject.file(releaseStoreFilePath!!)
                 storePassword = signingProp("storePassword", "RELEASE_STORE_PASSWORD")
                 keyAlias = signingProp("keyAlias", "RELEASE_KEY_ALIAS")
                 keyPassword = signingProp("keyPassword", "RELEASE_KEY_PASSWORD")
