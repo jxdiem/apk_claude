@@ -1,8 +1,24 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
 }
+
+// Release signing: read from a local, git-ignored keystore.properties when
+// present (developer machine), falling back to environment variables
+// (GitHub Actions secrets) so the signing key never has to be committed.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
+}
+
+fun signingProp(propertyKey: String, envKey: String): String? =
+    keystoreProperties.getProperty(propertyKey) ?: System.getenv(envKey)
+
+val releaseStoreFilePath = signingProp("storeFile", "RELEASE_STORE_FILE")
+val hasReleaseSigning = releaseStoreFilePath != null && file(releaseStoreFilePath).exists()
 
 android {
     namespace = "com.jxdiem.diemgeo"
@@ -13,9 +29,20 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseStoreFilePath!!)
+                storePassword = signingProp("storePassword", "RELEASE_STORE_PASSWORD")
+                keyAlias = signingProp("keyAlias", "RELEASE_KEY_ALIAS")
+                keyPassword = signingProp("keyPassword", "RELEASE_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -25,6 +52,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             isMinifyEnabled = false

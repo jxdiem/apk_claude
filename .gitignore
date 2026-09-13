@@ -12,3 +12,8 @@ local.properties
 *.aab
 
 app/build/
+
+# Release signing material — never commit these
+keystore.properties
+*.jks
+*.keystore
