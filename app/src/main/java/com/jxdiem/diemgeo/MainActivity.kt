@@ -7,6 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -29,10 +31,11 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHost.navController
 
-        findViewById<BottomNavigationView>(R.id.bottom_nav)
-            .setupWithNavController(navController)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        bottomNav.setupWithNavController(navController)
 
         setupDrawer()
+        applyEdgeToEdgeInsets(bottomNav)
 
         requestPermissions.launch(
             arrayOf(
@@ -63,6 +66,29 @@ class MainActivity : AppCompatActivity() {
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
+        }
+    }
+
+    /**
+     * Android 15+ (targetSdk 35+) forces edge-to-edge: content draws behind
+     * the system bars unconditionally, so the persistent chrome (toolbar,
+     * bottom navigation) must add its own padding or the status/gesture bar
+     * would overlap it.
+     */
+    private fun applyEdgeToEdgeInsets(bottomNav: BottomNavigationView) {
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        val toolbarInitialTopPadding = toolbar.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(view.paddingLeft, toolbarInitialTopPadding + bars.top, view.paddingRight, view.paddingBottom)
+            insets
+        }
+
+        val bottomNavInitialBottomPadding = bottomNav.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, bottomNavInitialBottomPadding + bars.bottom)
+            insets
         }
     }
 

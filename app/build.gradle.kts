@@ -22,13 +22,13 @@ val hasReleaseSigning = releaseStoreFilePath != null && rootProject.file(release
 
 android {
     namespace = "com.jxdiem.diemgeo"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jxdiem.diemgeo"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 36
+        versionCode = 2
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
