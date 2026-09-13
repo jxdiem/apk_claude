@@ -25,7 +25,10 @@ private data class StegoPayload(
     val accuracyM: Float,
     val timestampMillis: Long,
     val trustScore: Int,
-    val satellitesUsed: Int
+    val satellitesUsed: Int,
+    val azimuthDeg: Float?,
+    val pitchDeg: Float?,
+    val rollDeg: Float?
 )
 
 class CameraViewModel(application: Application) : AndroidViewModel(application) {
@@ -46,6 +49,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
             val location = trustState.location
 
             val labels = PhotoLabeler.label(bitmap)
+            val orientation = trustEngine.currentCameraOrientation()
 
             val payload = StegoPayload(
                 lat = location?.latitude ?: 0.0,
@@ -54,7 +58,10 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
                 accuracyM = location?.takeIf { it.hasAccuracy() }?.accuracy ?: -1f,
                 timestampMillis = System.currentTimeMillis(),
                 trustScore = trustState.trustScore,
-                satellitesUsed = trustState.satellitesUsedInFix
+                satellitesUsed = trustState.satellitesUsedInFix,
+                azimuthDeg = orientation?.azimuthDeg,
+                pitchDeg = orientation?.pitchDeg,
+                rollDeg = orientation?.rollDeg
             )
             val payloadJson = Gson().toJson(payload)
 
@@ -88,7 +95,10 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
                 satellitesUsedInFix = trustState.satellitesUsedInFix,
                 trustScore = trustState.trustScore,
                 aiLabels = labels,
-                stegoSignature = Steganography.sha256(payloadJson)
+                stegoSignature = Steganography.sha256(payloadJson),
+                azimuthDeg = payload.azimuthDeg,
+                pitchDeg = payload.pitchDeg,
+                rollDeg = payload.rollDeg
             )
             val id = db.photoDao().insert(entity)
             _lastCapture.emit(entity.copy(id = id))

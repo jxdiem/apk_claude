@@ -34,8 +34,11 @@ class PhotoAdapter(
             onVerify: (PhotoEntity, (String) -> Unit) -> Unit
         ) {
             val date = DateFormat.getDateTimeInstance().format(Date(photo.takenAtMillis))
+            val orientationText = photo.azimuthDeg?.let { az ->
+                "  •  direzione %.0f°%s".format(az, photo.pitchDeg?.let { p -> ", inclinazione %.0f°".format(p) } ?: "")
+            } ?: ""
             binding.textDetails.text = "$date  •  fiducia ${photo.trustScore}%  •  " +
-                "%.1f, %.1f".format(photo.latitude, photo.longitude)
+                "%.1f, %.1f".format(photo.latitude, photo.longitude) + orientationText
             binding.textLabels.text = if (photo.aiLabels.isNotEmpty()) {
                 photo.aiLabels.joinToString { it.text }
             } else {

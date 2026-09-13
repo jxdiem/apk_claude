@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [PolygonEntity::class, PhotoEntity::class, MapSourceEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "diem_geo.db"
-                ).build().also { db ->
+                ).fallbackToDestructiveMigration().build().also { db ->
                     instance = db
                     seedDefaultSourcesIfNeeded(db)
                 }

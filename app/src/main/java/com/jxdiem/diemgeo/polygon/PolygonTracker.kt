@@ -13,11 +13,11 @@ data class PolygonTrackingState(
 )
 
 /**
- * Accumulates GeoPointSample vertices while the user walks the perimeter of
- * a plot. Only active while the map screen is in the foreground (no
- * background service): tracking pauses automatically if the screen leaves
- * the foreground, matching the simpler foreground-only model chosen for
- * this app.
+ * A polygon vertex is only added when the surveyor explicitly taps "Fissa
+ * punto" while standing on it — this is a point-by-point survey workflow,
+ * not a continuous GPS trace, so accidental drift or a wobbly signal while
+ * walking between vertices never distorts the shape. Only active while the
+ * map screen is in the foreground (no background service).
  */
 class PolygonTracker {
 
@@ -38,15 +38,15 @@ class PolygonTracker {
         _state.value = PolygonTrackingState(isTracking = false, points = emptyList())
     }
 
-    fun onNewTrustState(trustState: LocationTrustState) {
-        if (!_state.value.isTracking) return
-        val sample = trustState.toGeoPointSample() ?: return
+    /** Fissa punto: records the current location as the next vertex. */
+    fun addVertex(trustState: LocationTrustState): Boolean {
+        if (!_state.value.isTracking) return false
+        val sample = trustState.toGeoPointSample() ?: return false
 
         val current = _state.value.points
         val last = current.lastOrNull()
-        if (last != null) {
-            val distance = distanceMeters(last, sample)
-            if (distance < MIN_VERTEX_DISTANCE_M) return
+        if (last != null && distanceMeters(last, sample) < MIN_VERTEX_DISTANCE_M) {
+            return false // guards against an accidental double-tap on the same spot
         }
 
         val updated = current + sample
@@ -54,6 +54,7 @@ class PolygonTracker {
             points = updated,
             liveAreaSquareMeters = polygonAreaSquareMeters(updated)
         )
+        return true
     }
 
     private fun distanceMeters(a: GeoPointSample, b: GeoPointSample): Float {
@@ -63,6 +64,6 @@ class PolygonTracker {
     }
 
     companion object {
-        private const val MIN_VERTEX_DISTANCE_M = 2.0f
+        private const val MIN_VERTEX_DISTANCE_M = 0.5f
     }
 }

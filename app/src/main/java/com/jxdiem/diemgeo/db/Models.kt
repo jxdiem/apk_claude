@@ -22,6 +22,13 @@ data class AiLabel(
     val confidence: Float
 )
 
+/** Camera pointing direction at capture time, derived from accelerometer + magnetometer. */
+data class CameraOrientation(
+    val azimuthDeg: Float,
+    val pitchDeg: Float,
+    val rollDeg: Float
+)
+
 /** Full sensor snapshot embedded as metadata alongside a polygon or a photo. */
 data class SensorSnapshot(
     val accelerometer: FloatArray?,
@@ -32,5 +39,6 @@ data class SensorSnapshot(
     val gnssSatellitesInView: Int,
     val gnssSatellitesUsed: Int,
     val locationIsMock: Boolean,
-    val trustScore: Int
+    val trustScore: Int,
+    val cameraOrientation: CameraOrientation? = null
 )

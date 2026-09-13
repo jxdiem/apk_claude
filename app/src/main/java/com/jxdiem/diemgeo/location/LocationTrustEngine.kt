@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import android.hardware.Sensor
+import com.jxdiem.diemgeo.security.RootStatus
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
@@ -14,6 +15,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import com.jxdiem.diemgeo.db.CameraOrientation
 import com.jxdiem.diemgeo.db.GeoPointSample
 import com.jxdiem.diemgeo.db.SensorSnapshot
 import kotlinx.coroutines.channels.awaitClose
@@ -61,18 +63,24 @@ data class LocationTrustState(
         )
     }
 
-    fun toSensorSnapshot(lastAccel: FloatArray?, lastMag: FloatArray?, lastGyro: FloatArray?, lastPressure: Float?) =
-        SensorSnapshot(
-            accelerometer = lastAccel,
-            magnetometer = lastMag,
-            gyroscope = lastGyro,
-            pressureHpa = lastPressure,
-            gnssHorizontalAccuracyM = location?.takeIf { it.hasAccuracy() }?.accuracy,
-            gnssSatellitesInView = satellitesInView,
-            gnssSatellitesUsed = satellitesUsedInFix,
-            locationIsMock = isMockSuspected,
-            trustScore = trustScore
-        )
+    fun toSensorSnapshot(
+        lastAccel: FloatArray?,
+        lastMag: FloatArray?,
+        lastGyro: FloatArray?,
+        lastPressure: Float?,
+        cameraOrientation: CameraOrientation? = null
+    ) = SensorSnapshot(
+        accelerometer = lastAccel,
+        magnetometer = lastMag,
+        gyroscope = lastGyro,
+        pressureHpa = lastPressure,
+        gnssHorizontalAccuracyM = location?.takeIf { it.hasAccuracy() }?.accuracy,
+        gnssSatellitesInView = satellitesInView,
+        gnssSatellitesUsed = satellitesUsedInFix,
+        locationIsMock = isMockSuspected,
+        trustScore = trustScore,
+        cameraOrientation = cameraOrientation
+    )
 }
 
 /**
@@ -95,7 +103,30 @@ class LocationTrustEngine(private val context: Context) {
     val state: StateFlow<LocationTrustState> = _state
 
     fun lastSensorSnapshot(): SensorSnapshot =
-        _state.value.toSensorSnapshot(lastAccel, lastMag, lastGyro, lastPressure)
+        _state.value.toSensorSnapshot(lastAccel, lastMag, lastGyro, lastPressure, currentCameraOrientation())
+
+    /**
+     * Direction the camera is pointing (azimuth) and its tilt (pitch/roll),
+     * computed from the last accelerometer + magnetometer readings — the
+     * same technique a compass app uses. Returns null until both sensors
+     * have reported at least once.
+     */
+    fun currentCameraOrientation(): CameraOrientation? {
+        val accel = lastAccel ?: return null
+        val mag = lastMag ?: return null
+        val rotationMatrix = FloatArray(9)
+        if (!SensorManager.getRotationMatrix(rotationMatrix, null, accel, mag)) return null
+
+        val orientationValues = FloatArray(3)
+        SensorManager.getOrientation(rotationMatrix, orientationValues)
+
+        var azimuthDeg = Math.toDegrees(orientationValues[0].toDouble()).toFloat()
+        if (azimuthDeg < 0) azimuthDeg += 360f
+        val pitchDeg = Math.toDegrees(orientationValues[1].toDouble()).toFloat()
+        val rollDeg = Math.toDegrees(orientationValues[2].toDouble()).toFloat()
+
+        return CameraOrientation(azimuthDeg = azimuthDeg, pitchDeg = pitchDeg, rollDeg = rollDeg)
+    }
 
     private fun hasLocationPermission(): Boolean =
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -262,6 +293,8 @@ class LocationTrustEngine(private val context: Context) {
         if (satellitesUsed > 0 && averageCn0 < MIN_HEALTHY_CN0) score -= 10
 
         if (sensorsLookStatic) score -= 15
+
+        if (RootStatus.isRooted) score -= 30
 
         return score.coerceIn(0, 100)
     }

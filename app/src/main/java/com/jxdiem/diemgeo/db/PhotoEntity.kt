@@ -18,5 +18,8 @@ data class PhotoEntity(
     val satellitesUsedInFix: Int,
     val trustScore: Int,
     val aiLabels: List<AiLabel>,
-    val stegoSignature: String
+    val stegoSignature: String,
+    val azimuthDeg: Float? = null,
+    val pitchDeg: Float? = null,
+    val rollDeg: Float? = null
 )

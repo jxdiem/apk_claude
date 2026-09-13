@@ -30,18 +30,24 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val trackingState: StateFlow<PolygonTrackingState> = tracker.state
 
     init {
-        viewModelScope.launch {
-            trustEngine.observe().collect { tracker.onNewTrustState(it) }
-        }
+        // Kept running for the live accuracy/trust display; vertices are
+        // only added explicitly via addVertex(), not on every fix.
+        viewModelScope.launch { trustEngine.observe().collect { } }
     }
 
     fun startTracking() = tracker.start()
 
     fun cancelTracking() = tracker.cancel()
 
-    fun stopAndSavePolygon(name: String, onSaved: (PolygonEntity) -> Unit) {
+    /** Fissa punto: records the current fix as the next polygon vertex. */
+    fun addVertex(): Boolean = tracker.addVertex(trustEngine.state.value)
+
+    fun stopAndSavePolygon(name: String, onSaved: (PolygonEntity) -> Unit, onError: () -> Unit = {}) {
+        if (tracker.state.value.points.size < 3) {
+            onError() // keep tracking active so the surveyor can add more vertices
+            return
+        }
         val points = tracker.stop()
-        if (points.size < 3) return
         viewModelScope.launch {
             val area = polygonAreaSquareMeters(points)
             val avgAccuracy = points.map { it.accuracyMeters }.average().toFloat()

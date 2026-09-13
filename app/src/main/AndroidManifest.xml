@@ -24,6 +24,23 @@
         android:name="android.hardware.sensor.compass"
         android:required="false" />
 
+    <!-- Needed so the explicit root-app lookups in RootDetector work reliably
+         on API 30+ package-visibility restrictions. -->
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="eu.chainfire.supersu" />
+        <package android:name="com.noshufou.android.su" />
+        <package android:name="com.noshufou.android.su.elite" />
+        <package android:name="com.koushikdutta.superuser" />
+        <package android:name="com.thirdparty.superuser" />
+        <package android:name="com.yellowes.su" />
+        <package android:name="com.kingroot.kinguser" />
+        <package android:name="com.kingo.root" />
+        <package android:name="com.smedialink.oneclickroot" />
+        <package android:name="com.zhiqupk.root.global" />
+        <package android:name="com.alephzain.framaroot" />
+    </queries>
+
     <application
         android:name=".DiemGeoApplication"
         android:allowBackup="true"

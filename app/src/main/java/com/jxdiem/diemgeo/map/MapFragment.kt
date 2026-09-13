@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.jxdiem.diemgeo.R
 import com.jxdiem.diemgeo.databinding.FragmentMapBinding
@@ -63,7 +64,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
         binding.buttonAddSource.setOnClickListener { showAddSourceDialog() }
         binding.buttonLayers.setOnClickListener { showLayerMenu() }
-        binding.buttonTrackPolygon.setOnClickListener { onTrackButtonClicked() }
+        binding.buttonStartPolygon.setOnClickListener { viewModel.startTracking() }
+        binding.buttonAddVertex.setOnClickListener { onAddVertexClicked() }
+        binding.buttonFinishPolygon.setOnClickListener { onFinishClicked() }
 
         observeState()
     }
@@ -97,9 +100,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 }
                 launch {
                     viewModel.trackingState.collect { tracking ->
-                        binding.buttonTrackPolygon.text = getString(
-                            if (tracking.isTracking) R.string.action_stop_polygon else R.string.action_start_polygon
-                        )
+                        binding.buttonStartPolygon.visibility = if (tracking.isTracking) View.GONE else View.VISIBLE
+                        binding.trackingControls.visibility = if (tracking.isTracking) View.VISIBLE else View.GONE
+
                         binding.textPolygonProgress.visibility = if (tracking.isTracking) View.VISIBLE else View.GONE
                         binding.textPolygonProgress.text = getString(R.string.polygon_area_label, tracking.liveAreaSquareMeters) +
                             "  •  " + getString(R.string.polygon_points_label, tracking.points.size)
@@ -116,12 +119,15 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
     }
 
-    private fun onTrackButtonClicked() {
-        if (viewModel.trackingState.value.isTracking) {
-            showSavePolygonDialog()
-        } else {
-            viewModel.startTracking()
+    private fun onAddVertexClicked() {
+        val added = viewModel.addVertex()
+        if (!added) {
+            Snackbar.make(binding.root, R.string.polygon_vertex_too_close, Snackbar.LENGTH_SHORT).show()
         }
+    }
+
+    private fun onFinishClicked() {
+        showSavePolygonDialog()
     }
 
     private fun showSavePolygonDialog() {
@@ -131,7 +137,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             .setView(input)
             .setPositiveButton(R.string.action_save) { _, _ ->
                 val name = input.text?.toString()?.ifBlank { "Poligono" } ?: "Poligono"
-                viewModel.stopAndSavePolygon(name) {}
+                viewModel.stopAndSavePolygon(
+                    name = name,
+                    onSaved = {},
+                    onError = {
+                        Snackbar.make(binding.root, R.string.polygon_need_more_points, Snackbar.LENGTH_LONG).show()
+                    }
+                )
             }
             .setNegativeButton(android.R.string.cancel) { _, _ -> viewModel.cancelTracking() }
             .setCancelable(false)

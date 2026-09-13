@@ -37,6 +37,14 @@ object PhotoMetadataWriter {
             it.timeZone = TimeZone.getTimeZone("UTC")
         }.format(Date(takenAtMillis)))
 
+        // Standard EXIF fields for "which way was the camera pointing" —
+        // magnetic bearing, since it comes from the on-board magnetometer
+        // rather than a true-north-corrected source.
+        sensorSnapshot.cameraOrientation?.let { orientation ->
+            exif.setAttribute(ExifInterface.TAG_GPS_IMG_DIRECTION, orientation.azimuthDeg.toString())
+            exif.setAttribute(ExifInterface.TAG_GPS_IMG_DIRECTION_REF, "M")
+        }
+
         exif.setAttribute(ExifInterface.TAG_USER_COMMENT, "diem_geo:" + Gson().toJson(sensorSnapshot))
 
         exif.saveAttributes()

@@ -73,8 +73,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:layout_marginBottom="20dp"
                 android:lineSpacingExtra="4dp"
                 android:text="@string/manual_section_saved_body" />
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manual_section_security_title" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/manual_section_security_body" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
