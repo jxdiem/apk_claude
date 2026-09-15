@@ -11,6 +11,25 @@ nascosta nei pixel per rilevare manomissioni delle foto.
 Schermata di benvenuto all'avvio e menu laterale (hamburger) con
 informazioni sulla versione e manuale d'uso integrato.
 
+## Screenshot
+
+<table>
+<tr>
+<td width="33%">
+<img src="store/screenshots/splash.jpg" width="100%" alt="Schermata di benvenuto">
+<br><sub>Schermata di benvenuto</sub>
+</td>
+<td width="33%">
+<img src="store/screenshots/mappa-principale.jpg" width="100%" alt="Mappa con precisione GPS e attendibilità della posizione">
+<br><sub>Mappa, precisione GPS e attendibilità della posizione</sub>
+</td>
+<td width="33%">
+<img src="store/screenshots/rilievo-in-corso.jpg" width="100%" alt="Rilievo di un poligono in corso, con i pulsanti Fissa punto e Chiudi">
+<br><sub>Rilievo poligono: Fissa punto / Chiudi</sub>
+</td>
+</tr>
+</table>
+
 ## Build
 
 L'APK di debug viene generato automaticamente da GitHub Actions
